@@ -32,3 +32,16 @@ class CustomUser(AbstractUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+
+class UploadedFile(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    file = models.FileField(upload_to='uploaded_files/')
+    visibility = models.BooleanField(default=True)
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    year_published = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.title
