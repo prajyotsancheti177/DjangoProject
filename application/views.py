@@ -9,9 +9,15 @@ from application import models
 from .forms import FileUploadForm
 from django.db.models import Count
 
+CustomUser = get_user_model()
 # Create your views here.
+@login_required(login_url='/')
 def home(request):
-    return render(request, "index.html")
+    received_data = request.session.get('data', '')
+    return render(request,"index.html",{"fname":received_data})
+    # return render(request, "index.html")
+
+    
 
 def signup(request):
     if request.method == "POST":
@@ -42,6 +48,8 @@ def signup(request):
     return render(request, "signup.html")
 
 def signin(request):
+    if(request.user.is_authenticated):
+        logout(request)
     if request.method == "POST":
         email = request.POST['email']
         pass1 = request.POST['pass1']
@@ -49,7 +57,9 @@ def signin(request):
         if user is not None:
             login(request, user)
             fname = user.first_name
-            return render(request,"index.html",{"fname":fname})
+            request.session['data'] = fname
+            return redirect('home')
+            # return render(request,"index.html",{"fname":fname})
         else:
             messages.error(request, "Wrong Credentials")
             return redirect("home")
@@ -59,7 +69,7 @@ def signin(request):
 def signout(request):
     logout(request)
     messages.success(request,"Logged out successfully")
-    return redirect('home')
+    return redirect('signin')
 
 def authors_sellers_page(request):
     CustomUser = get_user_model()
@@ -85,5 +95,6 @@ def upload_image(request):
 
 @login_required
 def uploaded_images(request):
+    received_data = request.session.get('data', '')
     user_files = UploadedFile.objects.filter(user = request.user)
-    return render(request, 'uploaded_files.html', {'user_files': user_files})
+    return render(request, 'uploaded_files.html', {'user_files': user_files, 'received_data' : received_data})

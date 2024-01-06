@@ -1,50 +1,3 @@
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-</head>
-<body>
-
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        <strong>Message:</strong> {{ message }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-    </div>
-    {% endfor %}
-
-    <h3>Social Book</h3>
-
-    {% if user.is_authenticated %}
-    <h3>Hello {{fname}}!</h3>
-    <h4>You're successfully logged in.</h4>
-    <button type="submit"><a href="/signout">SignOut</a></button>
-    <br>
-    {% else %}
-    <button type="submit"><a href="/signup">SignUp</a></button>
-    <br/>
-    <br/>
-    <button type="submit"><a href="/signin">SignIn</a></button>
-    {% endif %}
-    <br/>
-    <button type="submit"><a href="/register">Register</a></button>
-    <br>
-    <br/>
-    <button type="submit"><a href="/authors-sellers/">Authors And Sellers</a></button>
-    <br>
-    <br/>
-    <button type="submit"><a href="/upload-image/">Upload Image</a></button>
-    <br>
-    <br/>
-    <button type="submit"><a href="/uploaded-image/">Uploaded Image</a></button>
-    <br>
-</body>
-</html> {% endcomment %}
-
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -81,7 +34,7 @@
 	</script>
 </head>
 <body>
-	<!-- <div class="pre-loader">
+	{% comment %} <div class="pre-loader">
 		<div class="pre-loader-box">
 			<div class="loader-logo"><img src="vendors/images/deskapp-logo.svg" alt=""></div>
 			<div class='loader-progress' id="progress_div">
@@ -92,7 +45,7 @@
 				Loading...
 			</div>
 		</div>
-	</div> -->
+	</div> {% endcomment %}
 
 	<div class="header">
 		<div class="header-left">
@@ -182,7 +135,7 @@
 								</li>
 								<li>
 									<a href="#">
-										<img src="vendors/images/photo4.jpg"%} alt="">
+										<img src={% static "vendors/images/photo4.jpg"%} alt="">
 										<h3>Renee I. Hansen</h3>
 										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed...</p>
 									</a>
@@ -205,13 +158,14 @@
 						<span class="user-icon">
 							<img src={% static "vendors/images/photo1.jpg"%} alt="">
 						</span>
-						<span class="user-name">Ross C. Lopez</span>
+						<span class="user-name">{{fname}}</span>
+                        
 					</a>
 					<div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
 						<a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i> Profile</a>
 						<a class="dropdown-item" href="profile.html"><i class="dw dw-settings2"></i> Setting</a>
 						<a class="dropdown-item" href="faq.html"><i class="dw dw-help"></i> Help</a>
-						<a class="dropdown-item" href="login.html"><i class="dw dw-logout"></i> Log Out</a>
+						<a class="dropdown-item" href="/signout"><i class="dw dw-logout"></i> Log Out</a>
 					</div>
 				</div>
 			</div>
@@ -298,7 +252,7 @@
 
 	<div class="left-side-bar">
 		<div class="brand-logo">
-			<a href="index.html">
+			<a href="index">
 				<img src={% static "vendors/images/deskapp-logo.svg"%} alt="" class="dark-logo">
 				<img src={% static "vendors/images/deskapp-logo-white.svg"%} alt="" class="light-logo">
 			</a>
@@ -314,8 +268,9 @@
 							<span class="micon dw dw-house-1"></span><span class="mtext">Home</span>
 						</a>
 						<ul class="submenu">
-							<li><a href="index.html">Dashboard style 1</a></li>
-							<li><a href="index2.html">Dashboard style 2</a></li>
+							<li><a href="/authors-sellers/">Authors and Sellers List</a></li>
+							<li><a href="/upload-image/">Upload Image</a></li>
+							<li><a href="/uploaded-image/">Uploaded Image</a></li>
 						</ul>
 					</li>
 					<li class="dropdown">
@@ -488,7 +443,7 @@
 					<li>
 						<a href="https://dropways.github.io/deskapp-free-single-page-website-template/" target="_blank" class="dropdown-toggle no-arrow">
 							<span class="micon dw dw-paper-plane1"></span>
-							<span class="mtext">Landing Page <img src="vendors/images/coming-soon.png" alt="" width="25"></span>
+							<span class="mtext">Landing Page <img src={% static "vendors/images/coming-soon.png" alt="" width="25"%}></span>
 						</a>
 					</li>
 				</ul>

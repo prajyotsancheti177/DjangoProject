@@ -21,3 +21,4 @@ class FileUploadForm(forms.ModelForm):
     class Meta:
         model = UploadedFile
         fields = ['title', 'description', 'file', 'visibility', 'cost', 'year_published']
+        title = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
