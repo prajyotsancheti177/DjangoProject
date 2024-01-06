@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload User Data{% endblock %}
+
+{% block content %}
+	<div class="main-container">
+		<div class="pd-ltr-20">
+			<div class="container-fluid justify-content-between align-items-center">
+				<div >
+					<h2>Upload Data</h2>
+                    <br/>
+					<form method="post" action="{% url 'upload_data' %}" enctype="multipart/form-data">
+					    {% csrf_token %}
+                        <label for="Upload">Select the file to be Uploaded</label>
+                        <select name="Upload" id="Upload">
+                            <option value="Employee Data">Employee Data</option>
+                            <option value="Department Data">Department Data</option>
+                        </select>
+                        <br/>
+                        <input type="file" id="upload_file" name="upload_file">
+                        <br/>
+                        <br/>
+					    <button type="submit">Upload</button>
+					</form>      
+				</div>
+			</div> 
+		</div>
+	</div>
+{% endblock %}

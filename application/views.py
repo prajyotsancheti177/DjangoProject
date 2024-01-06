@@ -4,9 +4,11 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
-from application.models import UploadedFile
+# from application.models import UploadedFile
+from application.models import UploadedFile, departmentData, employeeData
 from application import models
 from .forms import FileUploadForm
+import pandas as pd
 from django.db.models import Count
 
 CustomUser = get_user_model()
@@ -98,3 +100,33 @@ def uploaded_images(request):
     received_data = request.session.get('data', '')
     user_files = UploadedFile.objects.filter(user = request.user)
     return render(request, 'uploaded_files.html', {'user_files': user_files, 'received_data' : received_data})
+
+@login_required
+def upload_data(request):
+    if request.method == "POST":
+        choice = request.POST.get('Upload')
+        data = request.FILES.get('upload_file')
+        if(data):
+            try:
+                df = pd.read_excel(data)
+                df['department'] = df['department'].fillna(0).astype(int)
+                print(df)
+                it_department_instance, created = departmentData.objects.get_or_create(name='IT', description='Information Technology')
+                if choice == "Department Data":
+                    deparment_headings = df[['name','description']]
+                    departmentData.objects.all().delete()
+                    departmentData.objects.bulk_create([departmentData(**row) for row in deparment_headings.to_dict(orient='records')])
+                elif choice == "Employee Data":
+                    # employee_headings = df[['first_name','last_name','email','year_joined','department']]
+                    # df['department'] = df['department'].fillna(0).astype(int)
+                    # employeeData.objects.all().delete()
+                    # employeeData.objects.bulk_create([employeeData(**row) for row in employee_headings.to_dict(orient='records')])
+                    employee_data = [
+                        {'first_name': 'John', 'last_name': 'Doe', 'email': 'john@example.com', 'year_joined': 2022, 'department': it_department_instance},
+                    ]
+                    for data in employee_data:
+                        new_employee = employeeData(**data)
+                        new_employee.save()
+            except pd.errors.ParserError:
+                print("Error")
+    return render(request,'upload_data.html')

@@ -45,3 +45,20 @@ class UploadedFile(models.Model):
 
     def __str__(self):
         return self.title
+
+class departmentData(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+class employeeData(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    year_joined = models.PositiveIntegerField()
+    department = models.ForeignKey(departmentData, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.email})"

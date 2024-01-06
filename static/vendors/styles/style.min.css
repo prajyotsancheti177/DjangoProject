@@ -1505,7 +1505,7 @@ table.dataTable.dtr-inline.collapsed
 }
 .brand-logo a span {
   display: block;
-  vertical-align: middle;
+  /* vertical-align: middle; */
   margin-left: 0;
   overflow: hidden;
   text-overflow: ellipsis;
