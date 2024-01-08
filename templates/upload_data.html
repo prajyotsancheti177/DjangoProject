@@ -23,6 +23,26 @@
 					    <button type="submit">Upload</button>
 					</form>      
 				</div>
+				<br/>
+				<div class="card-box mb-30 ">
+					<h2 class="h4 pd-20">Best Selling Products</h2>
+					<table class="table nowrap">
+						<thead>
+							<tr>
+								<th scope="col">Department</th>
+								<th scope="col">Number of Employees</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for i in departments %}
+							<tr>
+								<th scope="row">{{ i.department__name }}</th>
+								<th scope="row">{{ i.user_count}}</th>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
 			</div> 
 		</div>
 	</div>

@@ -102,6 +102,7 @@ def upload_image(request):
 def uploaded_images(request):
     received_data = request.session.get('data', '')
     user_files = UploadedFile.objects.filter(user = request.user)
+    print(user_files.query)
     return render(request, 'uploaded_files.html', {'user_files': user_files, 'received_data' : received_data})
 
 @login_required
@@ -139,17 +140,15 @@ def upload_data(request):
                             department=department_instance
                         )
                         new_employee.save()
-# annot
-
-
-
-                    # employee_headings = df[['first_name','last_name','email','year_joined','department']]
-                    # print(employee_headings)
-                    # employeeData.objects.all().delete()
-                    # employeeData.objects.bulk_create([employeeData(**row) for row in employee_headings.to_dict(orient='records')])
-                    # employee_data = [
-                    #     {'first_name': 'John', 'last_name': 'Doe', 'email': 'john@example.com', 'year_joined': 2022, 'department': it_department_instance},
-                    # ]
             except pd.errors.ParserError:
                 print("Error")
-    return render(request,'upload_data.html')
+    list = employeeData.objects.values('department__name').annotate(user_count=Count('department'))
+    print(list.query)
+    print(list)
+    return render(request,'upload_data.html', {'departments': list})
+
+# SELECT "application_departmentdata"."name", COUNT("application_employeedata"."department_id") AS "user_count" 
+# FROM "application_employeedata" 
+# INNER JOIN "application_departmentdata" 
+# ON ("application_employeedata"."department_id" = "application_departmentdata"."id") 
+# GROUP BY "application_departmentdata"."name"
