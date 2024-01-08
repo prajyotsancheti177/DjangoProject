@@ -22,39 +22,6 @@
 	<link rel="stylesheet" type="text/css" href={% static "vendors/styles/style.css"%}>
 
 	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
-	<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag(){dataLayer.push(arguments);}
-		gtag('js', new Date());
-
-		gtag('config', 'UA-119386393-1');
-	</script>
-    <script>
-
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-
-        function isValidPassword(password) {
-            return password.length >= 8;
-        }
-        function validateForm() {
-
-            if (!isValidEmail(document.forms["signup"]["email"].value)) {
-                alert("Invalid Email");
-                return false;
-            }
-
-            if (!isValidPassword(document.forms["signup"]["pass1"].value)) {
-                alert("Invalid password");
-                return false;
-            }
-
-            return true;
-          }
-    </script>
 </head>
 <body class="login-page">
 	<div class="login-header box-shadow">
@@ -82,7 +49,7 @@
 						<div class="login-title">
 							<h2 class="text-center text-primary">Register To DeskApp</h2>
 						</div>
-						<form method="post" action="/signup" onsubmit="return validateForm()" name="signup">
+						<form id="signup" method="post" action="/signup">
                             {% csrf_token %}
 							<div class="input-group custom">
 								<input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Username" >
@@ -127,7 +94,7 @@
 							<div class="row">
 								<div class="col-sm-12">
 									<div class="input-group mb-0">
-                                        <button class="btn btn-primary btn-lg btn-block" type="submit">Register</button>
+										<button type="button" class="btn btn-primary btn-lg btn-block" onclick="submitForm()">Register</button>
 									</div>
 								</div>
 							</div>
@@ -138,6 +105,64 @@
 		</div>
 	</div>
 	<!-- js -->
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script>
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function isValidPassword(password) {
+            return password.length >= 8;
+        }
+        function validateForm() {
+
+        	if (!isValidEmail(document.forms["signup"]["email"].value)) {
+                alert("Invalid Email");
+                return false;
+            }
+
+            if (!isValidPassword(document.forms["signup"]["pass1"].value)) {
+                alert("Invalid password");
+                return false;
+            }
+
+			return true;
+        	}
+		
+		function submitForm(){
+			if (!validateForm()) {
+				return;
+			}
+			console.log("hello");
+			var csrfToken = $('[name="csrfmiddlewaretoken"]').val();
+			var formData = $('#signup').serialize();
+			formData += '&csrfmiddlewaretoken=' + csrfToken;
+			event.preventDefault();
+			$.ajax({
+        	    type: 'POST',
+        	    url: 'signup',
+        	    data: formData,
+        	    success: function(response) {
+        	        console.log(response);
+        	        // Redirect to the specified URL if needed
+        	        window.location.href = response.redirect;
+        	    },
+        	    error: function(error) {
+        	        console.error('Error:', error);
+        	    }
+        	});
+		}
+		
+    </script>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-119386393-1');
+	</script>
 	<script src={% static "vendors/scripts/core.js"%}></script>
 	<script src={% static "vendors/scripts/script.min.js"%}></script>
 	<script src={% static "vendors/scripts/process.js"%}></script>

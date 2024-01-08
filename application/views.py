@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 # from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -22,30 +22,33 @@ def home(request):
     
 
 def signup(request):
+    print(request.method)
     if request.method == "POST":
-        username = request.POST['username']
-        fname = request.POST['fname']
-        lname = request.POST['lname']
-        email = request.POST['email']
-        pass1 = request.POST['pass1']
-        pass2 = request.POST['pass2']
+        username = request.POST.get('username')
+        fname = request.POST.get('fname')
+        lname = request.POST.get('lname')
+        email = request.POST.get('email')
+        pass1 = request.POST.get('pass1')
+        pass2 = request.POST.get('pass2')
         public_visibility = request.POST.get('public_visibility')
-        if pass1 != pass2 :
-            return HttpResponse("Password and confirm password are diffrent")
+        if pass1 != pass2:
+            return JsonResponse({'error': 'Password and confirm password are different'})
+        if public_visibility == 'on':
+            public_visibility = True
         else:
-            if public_visibility == 'on':
-                public_visibility = True
-            else:
-                public_visibility = False
+            public_visibility = False        
+
         CustomUser = get_user_model()
         myuser = CustomUser.objects.create_user(email, username, pass1)
         myuser.first_name = fname
         myuser.last_name = lname 
-        myuser.public_visibility = public_visibility
-        myuser.save()  
+        myuser.public_visibility = public_visibility == 'true'
+        myuser.save()
+        return JsonResponse({'message': 'User registered successfully!', 'redirect': '/'})
 
+    # return JsonResponse({'error': 'Invalid request'})
         # messages.success(request, "Your Account has been successfully created.")     
-        return redirect("signin")
+        # return redirect("signin")
     
     return render(request, "signup.html")
 
@@ -64,7 +67,7 @@ def signin(request):
             # return render(request,"index.html",{"fname":fname})
         else:
             messages.error(request, "Wrong Credentials")
-            return redirect("home")
+            # return redirect("home")
     
     return render(request, "signin.html")
 
