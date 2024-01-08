@@ -30,49 +30,6 @@
 
 		gtag('config', 'UA-119386393-1');
 	</script>
-    {% comment %} <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Function to validate email format
-            function isValidEmail(email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-            }
-
-            // Function to validate password length
-            function isValidPassword(password) {
-                return password.length >= 8;
-            }
-
-            // Function to handle form submission and perform validation
-            function validateForm(event) {
-                const emailInput = document.getElementById('email');
-                const passwordInput = document.getElementById('pass1');
-
-                // Reset previous validation messages
-                //emailInput.setCustomValidity('');
-                //passwordInput.setCustomValidity('');
-
-                // Validate email
-                if (!isValidEmail(emailInput.value)) {
-                    emailInput.setCustomValidity('Enter a valid email address');
-                }
-
-                // Validate password
-                if (!isValidPassword(passwordInput.value)) {
-                    passwordInput.setCustomValidity('Password must be at least 8 characters');
-                }
-
-                // Check if the form is valid before submission
-                if (!this.checkValidity()) {
-                    event.preventDefault(); // Prevent form submission if validation fails
-                }
-            }
-
-            // Attach the validation function to the form's submit event
-            const signupForm = document.getElementById('signup-form');
-            signupForm.addEventListener('submit', validateForm);
-        });
-    </script> {% endcomment %}
     <script>
 
         function isValidEmail(email) {

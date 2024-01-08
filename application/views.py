@@ -109,24 +109,44 @@ def upload_data(request):
         if(data):
             try:
                 df = pd.read_excel(data)
-                df['department'] = df['department'].fillna(0).astype(int)
                 print(df)
-                it_department_instance, created = departmentData.objects.get_or_create(name='IT', description='Information Technology')
                 if choice == "Department Data":
-                    deparment_headings = df[['name','description']]
                     departmentData.objects.all().delete()
-                    departmentData.objects.bulk_create([departmentData(**row) for row in deparment_headings.to_dict(orient='records')])
+                    unique_departments = df['name'].unique()
+                    # deparment_headings = df[['name','description']]
+                    # departmentData.objects.bulk_create([departmentData(**row) for row in deparment_headings.to_dict(orient='records')])
+                    for department_name in unique_departments:
+                        department_instance, created = departmentData.objects.get_or_create(name=department_name, description=f'Description for {department_name}')
+                        # print(department_instance)
                 elif choice == "Employee Data":
+                    employee_data = df[['first_name', 'last_name', 'email', 'year_joined', 'department']]
+                    employeeData.objects.all().delete()
+
+                    for _, row in employee_data.iterrows():
+                        department_name = row['department']                        
+                        # Retrieve the corresponding department instance based on the name
+                        department_instance = departmentData.objects.get(name=department_name)
                     # employee_headings = df[['first_name','last_name','email','year_joined','department']]
-                    # df['department'] = df['department'].fillna(0).astype(int)
+                    # employeeData.objects.bulk_create([employeeData(**row) for row in employee_headings.to_dict(orient='records')])
+                        new_employee = employeeData(
+                            first_name=row['first_name'],
+                            last_name=row['last_name'],
+                            email=row['email'],
+                            year_joined=row['year_joined'],
+                            department=department_instance
+                        )
+                        new_employee.save()
+# annot
+
+
+
+                    # employee_headings = df[['first_name','last_name','email','year_joined','department']]
+                    # print(employee_headings)
                     # employeeData.objects.all().delete()
                     # employeeData.objects.bulk_create([employeeData(**row) for row in employee_headings.to_dict(orient='records')])
-                    employee_data = [
-                        {'first_name': 'John', 'last_name': 'Doe', 'email': 'john@example.com', 'year_joined': 2022, 'department': it_department_instance},
-                    ]
-                    for data in employee_data:
-                        new_employee = employeeData(**data)
-                        new_employee.save()
+                    # employee_data = [
+                    #     {'first_name': 'John', 'last_name': 'Doe', 'email': 'john@example.com', 'year_joined': 2022, 'department': it_department_instance},
+                    # ]
             except pd.errors.ParserError:
                 print("Error")
     return render(request,'upload_data.html')
