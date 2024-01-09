@@ -4,6 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 # from application.models import UploadedFile
 from application.models import UploadedFile, departmentData, employeeData
 from application import models
@@ -30,8 +31,8 @@ def home(request):
 
 def signup(request):
     return render(request, "signup.html")
-
 class SignUpUser(APIView):
+    permission_classes = [AllowAny]
     def post(self,request):
         username = request.POST.get('username')
         fname = request.POST.get('fname')
@@ -51,29 +52,29 @@ class SignUpUser(APIView):
         myuser.last_name = lname 
         myuser.public_visibility = public_visibility == 'true'
         myuser.save()
-        # token, _ = Token.objects.create(user=myuser)
-        # print(token)
-        # return Response({'token':token.key})
+        token, _ = Token.objects.get_or_create(user=myuser)
         redirection_url = "/"
-        return Response({'redirection_url': redirection_url},status=status.HTTP_200_OK)
-
-def signin(request):
-    if(request.user.is_authenticated):
-        logout(request)
-    if request.method == "POST":
+        print(token.key)
+        response_data = {'token': token.key, 'redirection_url': redirection_url}
+        return Response(response_data,status=status.HTTP_200_OK)
+    
+class SignInUser(APIView):
+    permission_classes = [AllowAny]
+    def post(self,request):
         email = request.POST['email']
         pass1 = request.POST['pass1']
         user = authenticate(username=email, password=pass1)
-        if user is not None:
-            login(request, user)
-            fname = user.first_name
-            request.session['data'] = fname
-            return redirect('home')
-            # return render(request,"index.html",{"fname":fname})
-        else:
-            messages.error(request, "Wrong Credentials")
-            # return redirect("home")
-    
+        if user is None:
+            return Response({'error':'Bad Credentials'},status=status.HTTP_400_BAD_REQUEST)
+        login(request, user)
+        token, _ = Token.objects.get_or_create(user=user)
+        print("Logged In")
+        redirection_url = "index"
+        print(token.key)
+        response_data = {'token': token.key, 'redirection_url': redirection_url}
+        return Response(response_data,status=status.HTTP_200_OK)
+
+def signin(request):
     return render(request, "signin.html")
 
 def signout(request):

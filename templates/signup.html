@@ -131,9 +131,9 @@
         	}
 		
 		function submitForm(){
-//			if (!validateForm()) {
-//				return;
-//			}
+			if (!validateForm()) {
+				return;
+			}
 			var csrfToken = $('[name="csrfmiddlewaretoken"]').val();
 			var formData = $('#signup').serialize();
 			formData += '&csrfmiddlewaretoken=' + csrfToken;

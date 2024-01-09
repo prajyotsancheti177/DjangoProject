@@ -3,12 +3,13 @@ from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import DisplayUsers,Employee_Count,SignUpUser
+from .views import DisplayUsers,Employee_Count,SignUpUser,SignInUser
 
 urlpatterns = [
     path('', views.signin, name="signin"),
     path('signup', views.signup, name="signup"),
     path('signupAPI', SignUpUser.as_view(), name="signup"),
+    path('signinAPI', SignInUser.as_view(), name="signup"),
     path('index', views.home, name="home"),
     path('signout', views.signout, name="signout"),
     path('display_users/', DisplayUsers.as_view(), name="display_users"),
