@@ -131,22 +131,21 @@
         	}
 		
 		function submitForm(){
-			if (!validateForm()) {
-				return;
-			}
-			console.log("hello");
+//			if (!validateForm()) {
+//				return;
+//			}
 			var csrfToken = $('[name="csrfmiddlewaretoken"]').val();
 			var formData = $('#signup').serialize();
 			formData += '&csrfmiddlewaretoken=' + csrfToken;
 			event.preventDefault();
 			$.ajax({
         	    type: 'POST',
-        	    url: 'signup',
+        	    url: 'signupAPI',
         	    data: formData,
         	    success: function(response) {
         	        console.log(response);
         	        // Redirect to the specified URL if needed
-        	        window.location.href = response.redirect;
+        	        window.location.href = response.redirection_url;
         	    },
         	    error: function(error) {
         	        console.error('Error:', error);

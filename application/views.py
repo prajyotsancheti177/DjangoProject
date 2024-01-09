@@ -10,6 +10,15 @@ from application import models
 from .forms import FileUploadForm
 import pandas as pd
 from django.db.models import Count
+from rest_framework import viewsets
+from .serializer import Employee_CountSerializer, UserSerializer, CustomUser
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+
 
 CustomUser = get_user_model()
 # Create your views here.
@@ -19,11 +28,11 @@ def home(request):
     return render(request,"index.html",{"fname":received_data})
     # return render(request, "index.html")
 
-    
-
 def signup(request):
-    print(request.method)
-    if request.method == "POST":
+    return render(request, "signup.html")
+
+class SignUpUser(APIView):
+    def post(self,request):
         username = request.POST.get('username')
         fname = request.POST.get('fname')
         lname = request.POST.get('lname')
@@ -37,20 +46,16 @@ def signup(request):
             public_visibility = True
         else:
             public_visibility = False        
-
-        CustomUser = get_user_model()
         myuser = CustomUser.objects.create_user(email, username, pass1)
         myuser.first_name = fname
         myuser.last_name = lname 
         myuser.public_visibility = public_visibility == 'true'
         myuser.save()
-        return JsonResponse({'message': 'User registered successfully!', 'redirect': '/'})
-
-    # return JsonResponse({'error': 'Invalid request'})
-        # messages.success(request, "Your Account has been successfully created.")     
-        # return redirect("signin")
-    
-    return render(request, "signup.html")
+        # token, _ = Token.objects.create(user=myuser)
+        # print(token)
+        # return Response({'token':token.key})
+        redirection_url = "/"
+        return Response({'redirection_url': redirection_url},status=status.HTTP_200_OK)
 
 def signin(request):
     if(request.user.is_authenticated):
@@ -76,10 +81,18 @@ def signout(request):
     messages.success(request,"Logged out successfully")
     return redirect('signin')
 
-def authors_sellers_page(request):
-    CustomUser = get_user_model()
-    user_filter = CustomUser.objects.filter(public_visibility=True)
-    return render(request, 'authors_sellers.html', {"users" : user_filter})
+
+class DisplayUsers(APIView):
+    def get(self, request):
+        users = CustomUser.objects.all()
+        print(users)
+        serializer = UserSerializer(users, many=True)
+        # redirection_url = "display/"
+        # response_data = {'users': serializer.data, 'redirection_url': redirection_url}
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+def display(request):
+    return render(request,'display_users.html')
 
 @login_required
 def upload_image(request):
@@ -144,11 +157,11 @@ def upload_data(request):
                 print("Error")
     list = employeeData.objects.values('department__name').annotate(user_count=Count('department'))
     print(list.query)
-    print(list)
+    # print(list)
     return render(request,'upload_data.html', {'departments': list})
-
-# SELECT "application_departmentdata"."name", COUNT("application_employeedata"."department_id") AS "user_count" 
-# FROM "application_employeedata" 
-# INNER JOIN "application_departmentdata" 
-# ON ("application_employeedata"."department_id" = "application_departmentdata"."id") 
-# GROUP BY "application_departmentdata"."name"
+    
+class Employee_Count(APIView):
+    def get(self, request):
+        list = employeeData.objects.values('department__name').annotate(user_count=Count('department'))
+        serializer = Employee_CountSerializer(list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
+from django.utils import timezone 
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -62,3 +62,5 @@ class employeeData(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
+
+
