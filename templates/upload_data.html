@@ -39,12 +39,12 @@
 				</div>
 			</div> 
 		</div>
-		{% comment %} <h1>CustomUser List</h1>
-		<ul id="userList"></ul>	 {% endcomment %}
+		<h1>CustomUser List</h1>
+		<ul id="userList"></ul>	
 	</div>
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
-			//const userListElement = document.getElementById('userList');
+			const userListElement = document.getElementById('userList');
 		
 			fetch('http://localhost:8000/employee_count/')
 				.then(response => response.json())
@@ -55,6 +55,7 @@
 						const departmentNameTh = $(`<th scope="row" id="departmentName${index + 1}">${user.department__name}</th>`);
 						const userCountTh = $(`<th scope="row" id="userCount${index + 1}">${user.user_count}</th>`);		
 						const dataRow = $('<tr></tr>');		
+						const departmentNameTd = $(`<th>${user.department__name}</th>`);
 						dataRow.append(departmentNameTd);		
 						const userCountTd = $(`<th>${user.user_count}</th>`);
 						dataRow.append(userCountTd);		
