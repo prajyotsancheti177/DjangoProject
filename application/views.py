@@ -13,7 +13,6 @@ import pandas as pd
 from django.db.models import Count
 from rest_framework import viewsets
 from .serializer import Employee_CountSerializer, UserSerializer, CustomUser
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -127,7 +126,7 @@ def upload_data(request):
         if(data):
             try:
                 df = pd.read_excel(data)
-                print(df)
+                # print(df)
                 if choice == "Department Data":
                     departmentData.objects.all().delete()
                     unique_departments = df['name'].unique()
@@ -156,13 +155,30 @@ def upload_data(request):
                         new_employee.save()
             except pd.errors.ParserError:
                 print("Error")
-    list = employeeData.objects.values('department__name').annotate(user_count=Count('department'))
-    print(list.query)
+    # list = employeeData.objects.values('department__name').annotate(user_count=Count('department'))
+    # print(list.query)
     # print(list)
-    return render(request,'upload_data.html', {'departments': list})
+    return render(request,'upload_data.html')
     
 class Employee_Count(APIView):
+    permission_classes = [AllowAny]
+    
     def get(self, request):
         list = employeeData.objects.values('department__name').annotate(user_count=Count('department'))
+        # list = employeeData.objects.all()
+        # list = departmentData.objects.values('name').annotate(user_count=Count('employee'))
+        # department_data_with_avg_year_joined = departmentData.objects.values('name').annotate(avg_year_joined=Avg('employee__year_joined'))
+        # department_data_filtered_count = departmentData.objects.values('name').annotate(employee_count=Count('employee', filter=Q(employee__year_joined__gt=2020)&Q(employee__first_name="Jason")))
+        # department_data_with_max_year_joined = departmentData.objects.values('name').annotate(max_year_joined=Max('employee__year_joined'))
+        # department_data_ordered_by_count = departmentData.objects.values('name').annotate(employee_count=Count('employee')).order_by('-employee_count')
+        print(list)
         serializer = Employee_CountSerializer(list, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+# EC2 T2 tier
+# RDS
+# S3 bucket
+# lambda
+# EC2 instance deployment file 
+# how to deploy dajngo project on EC2
+# 

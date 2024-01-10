@@ -152,7 +152,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "application.CustomUser"
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",  # Add your frontend URL
-    "http://127.0.0.1:8000",  # Add your frontend URL
-    # Add other allowed origins as needed
+    "http://127.0.0.1:8000", 
 ]
